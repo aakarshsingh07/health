@@ -3,68 +3,464 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Health Monitor</title>
+    <title>HealthPulse AI - Continuous Multimodal Health Monitor</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
 
-    <div class="dashboard-container">
-        
-        
-        <header class="dashboard-header">
-            <h1>AI Health Monitor</h1>
-            <span class="patient-name">Patient: Alex</span>
-        </header>
-
-        
-        
-        <section class="card hero-section status-warning">
-            <div class="hero-header">
-                <h2>AI Assessment: Warning</h2>
-                <span class="health-score">72<span>/100</span></span>
-            </div>
-            <p class="ai-prediction">Elevated fatigue detected. Asthma risk slightly increased due to poor sleep recovery.</p>
-            <div class="action-alert">
-                <strong>🔔 Action:</strong> Take a 20-minute rest. Prioritize 7+ hours of sleep tonight.
-            </div>
-        </section>
-
-        
-        <section class="vitals-grid">
-            
-            <div class="card vital-card">
-                <h3 class="vital-title">Steps Today</h3>
-                <p class="vital-value text-blue">8,450</p>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill bg-blue" style="width: 85%;"></div>
+<div class="app-shell">
+    <header class="navbar">
+        <div class="navbar-content">
+            <div class="brand-group">
+                <div class="brand-icon">HP</div>
+                <div>
+                    <span class="brand-title">HealthPulse AI</span>
+                    <span class="brand-badge">Multimodal Engine v2.4</span>
                 </div>
             </div>
 
-            <div class="card vital-card border-warning">
-                <h3 class="vital-title">Sleep (Last Night)</h3>
-                <p class="vital-value text-amber">5.2 hrs</p>
-                <span class="badge badge-amber">Below Target</span>
+            <div class="nav-meta-group">
+                <div class="live-sync-pill">
+                    <span class="status-dot"></span>
+                    <span>Smartwatch Connected (XYZ)</span>
+                </div>
+
+                <div class="patient-badge">
+                    <div class="patient-avatar"></div>
+                    <div class="patient-details">
+                        <span class="patient-name">XYZ</span>
+                        <span class="patient-sub" id="currentTimestamp">Syncing time...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- Multimodal AI Engine Hero Assessment -->
+        <section class="ai-hero-card" id="aiHeroCard">
+            <div class="ai-hero-top">
+                <div style="flex: 1; min-width: 280px;">
+                    <span class="ai-status-indicator" id="aiStatusBadge">
+                        <span>⚠️</span> <span id="aiStatusText">Attention: Moderate Fatigue & Respiratory Risk</span>
+                    </span>
+                    <h1 class="ai-heading" id="aiAssessmentHeadline">Combined Low Sleep Recovery & Elevated Exertion</h1>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.35rem;" id="aiSummaryParagraph">
+                        The AI Multimodal Fusion engine detected acute physiological fatigue correlated with your chronic respiratory profile.
+                    </p>
+                </div>
+
+                <div class="score-box">
+                    <div class="score-label">AI Health Index</div>
+                    <div class="score-number" id="healthScoreDisplay">72</div>
+                    <div class="score-scale">Baseline: 88/100</div>
+                </div>
             </div>
 
-            <div class="card vital-card">
-                <h3 class="vital-title">Avg Heart Rate</h3>
-                <p class="vital-value text-red">78 bpm</p>
-                <span class="badge badge-green">Normal</span>
+            <!-- Fusion Explanation -->
+            <div class="fusion-explanation">
+                <div class="fusion-title">
+                    <span>🧠</span> Cross-Modal Synthesis Engine Rationale
+                </div>
+                <div class="fusion-text" id="fusionRationaleText">
+                    Clinical record flags <span class="fusion-tag">Mild Asthma</span>. Continuous wearable telemetry reports <span class="fusion-tag">5.2h sleep deficit</span> (down 28% from 7-day avg) alongside an elevated resting heart rate (+8 bpm). In combination with seasonal humidity, probability of airway irritability is calculated at <strong>34%</strong>.
+                </div>
             </div>
 
+            <!-- Actionable Guidance Checklist -->
+            <div class="action-checklist">
+                <label class="action-item">
+                    <input type="checkbox" checked>
+                    <span>Schedule 20-min restorative rest before 4:00 PM</span>
+                </label>
+                <label class="action-item">
+                    <input type="checkbox" checked>
+                    <span>Keep prescribed Albuterol inhaler within reach</span>
+                </label>
+                <label class="action-item">
+                    <input type="checkbox">
+                    <span>Hydrate with 500ml electrolyte water</span>
+                </label>
+                <label class="action-item">
+                    <input type="checkbox">
+                    <span>Limit high-intensity cardio training this evening</span>
+                </label>
+            </div>
+
+            <!-- Scanner Trigger -->
+            <div class="ai-controls">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-muted);">
+                    <span>Last analyzed: 3 mins ago</span>
+                    <span>•</span>
+                    <span>Latency: 180ms</span>
+                </div>
+                <button class="scan-btn" id="runAiScanBtn" onclick="runAiDiagnosticScan()">
+                    <span>⚡ Run Diagnostic Sync & AI Recalculation</span>
+                </button>
+            </div>
+
+            <div class="scan-progress-bar" id="scanProgressBar">
+                <div class="scan-progress-fill" id="scanProgressFill"></div>
+            </div>
         </section>
 
-        
-        <section class="card clinical-section">
-            <h3 class="section-title">Clinical Profile</h3>
-            <ul class="clinical-list">
-                <li><strong>Age:</strong> 28</li>
-                <li><strong>Baseline:</strong> Mild asthma, normal blood pressure</li>
-                <li><strong>Last Checkup:</strong> August 2026</li>
-            </ul>
-        </section>
+        <!-- Main Dashboard Split Grid -->
+        <div class="dashboard-grid">
 
+            <aside class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>📋</span> Clinical Profile
+                    </div>
+                    <button class="card-action-btn" onclick="openClinicalModal()">Edit / Add Lab</button>
+                </div>
+
+                <div class="clinical-list">
+                    <div class="clinical-row">
+                        <span class="clinical-age">Age</span>
+                        <span class="clinical-value" id="dispAge">28 y/o</span>
+                    </div>
+                    <div class="clinical-row">
+                        <span class="clinical-gender">Gender</span>
+                        
+                        <span class="clinical-value" id="dispgender">Male</span>
+                    </div>
+                    <div class="clinical-row">
+                        <span class="clinical-label">Blood Group</span>
+                        <span class="clinical-value"><span class="tag tag-blue" id="dispBloodGroup">O+ Rh Pos</span></span>
+                    </div>
+                    <div class="clinical-row">
+                        <span class="clinical-label">Primary Condition</span>
+                        <span class="clinical-value"><span class="tag tag-amber" id="dispCondition">Mild Asthma</span></span>
+                    </div>
+                    <div class="clinical-row">
+                        <span class="clinical-label">Allergies</span>
+                        <span class="clinical-value" id="dispAllergies">Dust Mites, Pollen</span>
+                    </div>
+                    <div class="clinical-row">
+                        <span class="clinical-label">Baseline SpO2</span>
+                        <span class="clinical-value" id="dispBaseSpo2">98% (Room air)</span>
+                    </div>
+                    <div class="clinical-row">
+                        <span class="clinical-label">Fasting Glucose</span>
+                        <span class="clinical-value" id="dispGlucose">92 mg/dL</span>
+                    </div>
+                </div>
+
+                <div class="clinical-notes-box">
+                    <div class="notes-heading">Current Prescription & Guidance</div>
+                    <p id="dispNotes">Albuterol sulfate aerosol 90 mcg (2 puffs PRN before heavy workout or when wheezing is observed).</p>
+                </div>
+            </aside>
+
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+                <div class="vitals-grid">
+                    
+                    <!-- Steps Goal Card -->
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span class="vital-title">Daily Activity</span>
+                            <div class="vital-icon icon-blue">👟</div>
+                        </div>
+                        <div class="step-container" style="margin-top: 0.75rem;">
+                            <svg class="circular-progress" viewBox="0 0 80 80">
+                                <circle class="progress-circle-bg" cx="40" cy="40" r="36" />
+                                <circle class="progress-circle-val" id="stepCircleSvg" cx="40" cy="40" r="36" />
+                            </svg>
+                            <div>
+                                <div class="vital-stat" id="stepsValue">8,450</div>
+                                <div class="vital-unit" style="margin-left: 0;">Goal: 10,000 steps</div>
+                                <span class="tag tag-blue" style="margin-top: 0.35rem;">84.5% Completed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sleep Cycle Card -->
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span class="vital-title">Sleep Architecture</span>
+                            <div class="vital-icon icon-amber">🌙</div>
+                        </div>
+                        <div>
+                            <div class="vital-body">
+                                <div>
+                                    <span class="vital-stat" id="sleepValue">5.2</span>
+                                    <span class="vital-unit">Hours Total</span>
+                                </div>
+                                <span class="tag tag-amber">Sleep Deficit</span>
+                            </div>
+
+                            <div class="sleep-breakdown-bar">
+                                <div class="sleep-deep" title="Deep Sleep (1.3h)"></div>
+                                <div class="sleep-rem" title="REM Sleep (1.8h)"></div>
+                                <div class="sleep-light" title="Light Sleep (2.1h)"></div>
+                            </div>
+                            <div class="sleep-legend">
+                                <span><span class="legend-dot" style="background:#4338ca;"></span>Deep: 1.3h</span>
+                                <span><span class="legend-dot" style="background:#3b82f6;"></span>REM: 1.8h</span>
+                                <span><span class="legend-dot" style="background:#93c5fd;"></span>Light: 2.1h</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Heart Rate Card with ECG Canvas -->
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span class="vital-title">Live Heart Rate</span>
+                            <div class="vital-icon icon-red">❤️</div>
+                        </div>
+                        <div>
+                            <div class="vital-body" style="margin-bottom: 0.25rem;">
+                                <div>
+                                    <span class="vital-stat" id="bpmValue">78</span>
+                                    <span class="vital-unit">BPM</span>
+                                </div>
+                            </div>
+                            <div class="ecg-canvas-container">
+                        
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SpO2 & Metabolism Card -->
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span class="vital-title">Oxygen & Caloric Burn</span>
+                            <div class="vital-icon icon-green">🫁</div>
+                        </div>
+                        <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.65rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 500;">Blood Oxygen (SpO2)</span>
+                                <div>
+                                    <span style="font-size: 1.35rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;" id="spo2LiveValue">97</span>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 500;">Active Calories</span>
+                                <div>
+                                    <span style="font-size: 1.35rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;" id="calValue">465</span>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">kcal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="clinicalModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Update Clinical Profile</h3>
+            <button class="close-btn" onclick="closeClinicalModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Primary Diagnosed Condition</label>
+                <input type="text" id="modalCondition" class="form-input" value="Mild Asthma">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-group">
+                    <label class="form-label">Blood Group</label>
+                    <input type="text" id="modalBloodGroup" class="form-input" value="O+ Rh Pos">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Baseline SpO2 (%)</label>
+                    <input type="number" id="modalBaseSpo2" class="form-input" value="98">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fasting Glucose (mg/dL)</label>
+                <input type="number" id="modalGlucose" class="form-input" value="92">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Clinical Notes & Prescription</label>
+                <textarea id="modalNotes" rows="3" class="form-textarea">Albuterol sulfate aerosol 90 mcg (2 puffs PRN before heavy workout or when wheezing is observed).</textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeClinicalModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveClinicalData()">Save & Recalculate</button>
+        </div>
     </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="toast" id="toast">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Clinical baseline saved successfully!</span>
+</div>
+
+<script>
+    // --- Real-time Date and Clock Display ---
+    function updateClock() {
+        const now = new Date();
+        const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById('currentTimestamp').innerText = now.toLocaleDateString('en-US', options);
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    // --- Toast Notification Helper ---
+    function showToast(message, icon = '✅') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').innerText = message;
+        document.getElementById('toastIcon').innerText = icon;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // --- Modal Actions ---
+    function openClinicalModal() {
+        document.getElementById('clinicalModal').classList.add('active');
+    }
+
+    function closeClinicalModal() {
+        document.getElementById('clinicalModal').classList.remove('active');
+    }
+
+    function saveClinicalData() {
+        const cond = document.getElementById('modalCondition').value;
+        const blood = document.getElementById('modalBloodGroup').value;
+        const spo2 = document.getElementById('modalBaseSpo2').value;
+        const glucose = document.getElementById('modalGlucose').value;
+        const notes = document.getElementById('modalNotes').value;
+
+        document.getElementById('dispCondition').innerText = cond;
+        document.getElementById('dispBloodGroup').innerText = blood;
+        document.getElementById('dispBaseSpo2').innerText = spo2 + '% (Room air)';
+        document.getElementById('dispGlucose').innerText = glucose + ' mg/dL';
+        document.getElementById('dispNotes').innerText = notes;
+
+        closeClinicalModal();
+        showToast('Clinical records updated and re-indexed by AI.');
+        
+        // Trigger automated AI evaluation upon record update
+        runAiDiagnosticScan();
+    }
+
+    // --- Heart Rate Canvas Animation (Simulated Real-Time ECG) ---
+    const canvas = document.getElementById('ecgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = canvas.offsetWidth;
+    let height = canvas.height = canvas.offsetHeight;
+
+    window.addEventListener('resize', () => {
+        width = canvas.width = canvas.offsetWidth;
+        height = canvas.height = canvas.offsetHeight;
+    });
+
+    let xPos = 0;
+    let yPos = height / 2;
+    const points = [];
+    let beatPhase = 0;
+
+    function drawECG() {
+        // Subtle trailing fade effect
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.08)';
+        ctx.fillRect(0, 0, width, height);
+
+        beatPhase++;
+        let currentY = height / 2;
+
+        // Generate synthetic ECG wave cycle
+        const mod = beatPhase % 65;
+        if (mod === 10) currentY = height / 2 - 4; // P wave
+        else if (mod === 16) currentY = height / 2 + 5; // Q
+        else if (mod === 18) currentY = height / 2 - 24; // R peak
+        else if (mod === 20) currentY = height / 2 + 12; // S
+        else if (mod === 28) currentY = height / 2 - 7; // T wave
+        else currentY = height / 2 + (Math.random() * 2 - 1);
+
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(xPos, yPos);
+        xPos += 2.5;
+        if (xPos > width) {
+            xPos = 0;
+        }
+        yPos = currentY;
+        ctx.lineTo(xPos, yPos);
+        ctx.stroke();
+
+        requestAnimationFrame(drawECG);
+    }
+    drawECG();
+
+    // Simulated subtle BPM and SpO2 live fluctuations
+    setInterval(() => {
+        const bpmEl = document.getElementById('bpmValue');
+        const currentBpm = parseInt(bpmEl.innerText);
+        const delta = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+        const newBpm = Math.max(68, Math.min(88, currentBpm + delta));
+        bpmEl.innerText = newBpm;
+    }, 3500);
+
+    // --- Interactive AI Diagnostic Scan Simulation ---
+    function runAiDiagnosticScan() {
+        const scanBtn = document.getElementById('runAiScanBtn');
+        const progressBar = document.getElementById('scanProgressBar');
+        const progressFill = document.getElementById('scanProgressFill');
+        const heroCard = document.getElementById('aiHeroCard');
+
+        scanBtn.disabled = true;
+        scanBtn.innerText = '⏳ Fusing Sensor Streams & Clinical EHR...';
+        progressBar.style.display = 'block';
+        progressFill.style.width = '0%';
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 10;
+            progressFill.style.width = progress + '%';
+
+            if (progress >= 100) {
+                clearInterval(interval);
+
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                    scanBtn.disabled = false;
+                    scanBtn.innerHTML = '<span>⚡ Run Diagnostic Sync & AI Recalculation</span>';
+
+                    // Update UI with simulated freshly computed insights
+                    const healthScoreEl = document.getElementById('healthScoreDisplay');
+                    healthScoreEl.innerText = '75';
+                    healthScoreEl.style.color = '#10b981';
+
+                    const statusBadge = document.getElementById('aiStatusBadge');
+                    statusBadge.style.backgroundColor = 'var(--success-subtle)';
+                    statusBadge.style.borderColor = 'var(--success-border)';
+                    statusBadge.style.color = '#047857';
+                    document.getElementById('aiStatusText').innerText = 'Stable: Recovery Trajectory Improving';
+
+                    heroCard.style.borderLeftColor = 'var(--success)';
+                    document.getElementById('aiAssessmentHeadline').innerText = 'Wearable Vitals Stabilizing Following Hydration';
+                    document.getElementById('fusionRationaleText').innerHTML = 'Recent 4-hour window indicates reduced heart rate variability stress. Asthma exacerbation index shifted from <strong>34% down to 18%</strong>. Continue scheduled restorative rest.';
+
+                    showToast('AI Diagnostic scan complete: Health index recalculation completed.', '🧠');
+                }, 400);
+            }
+        }, 120);
+    }
+</script>
 
 </body>
 </html>
