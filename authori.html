@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health AI - Secure Clinical & Wearable Access</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="authori.css">
+    
+</head>
+<body>
+
+<div class="auth-wrapper">
+
+    <!-- Left Brand & Telemetry Panel -->
+    <aside class="brand-panel">
+        <div>
+            <div class="brand-header">
+                <div class="brand-logo">🛡️</div>
+                <div>
+                    <div class="brand-name">Health <span style="font-size: 0.8rem; background: rgba(37,99,235,0.4); padding: 2px 7px; border-radius: 9999px;">AI</span></div>
+                    <div class="brand-tagline">Continuous Multimodal Health Inference</div>
+                </div>
+            </div>
+
+            <!-- Live Telemetry Simulator Card -->
+            <div class="telemetry-preview">
+                <div class="telemetry-title">
+                    <span>Clinical Stream Link</span>
+                    <span class="live-dot" title="Live Continuous Stream Active"></span>
+                </div>
+
+                <div class="telemetry-metric">
+                    <span class="telemetry-label">⌚ Telemetry Protocol</span>
+                    <span class="telemetry-val" style="color: #38bdf8;">BLE 5.3 Active</span>
+                </div>
+                <div class="telemetry-metric">
+                    <span class="telemetry-label">🩺 Clinical Baseline</span>
+                    <span class="telemetry-val" style="color: #fbbf24;">Mild Asthma (EHR-Sync)</span>
+                </div>
+                <div class="telemetry-metric">
+                    <span class="telemetry-label">⚡ AI Inference Latency</span>
+                    <span class="telemetry-val" style="color: #4ade80;">142ms</span>
+                </div>
+                <div class="telemetry-metric">
+                    <span class="telemetry-label">🔒 Encrypted Envelope</span>
+                    <span class="telemetry-val">TLS 1.3 / AES-256</span>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="security-badge">
+                <span class="security-icon">🛡️</span>
+                <span>HIPAA & GDPR Architecture Compliant • Local Network Testing Mode</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Right Interaction & Auth Forms -->
+    <main class="auth-container">
+
+        <!-- Navigation Tabs -->
+        <div class="tab-switcher" id="authTabs">
+            <button class="tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">Sign In</button>
+            <button class="tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">Create Patient Account</button>
+        </div>
+
+        <!-- 1. LOGIN FORM -->
+        <div class="form-view active" id="loginView">
+            <h1 class="form-title">Welcome Back</h1>
+            <p class="form-subtitle">Enter your medical credentials or patient identifier to synchronize live vitals.</p>
+
+            <form onsubmit="handleAuthSubmit(event, 'login')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email or Patient ID</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="loginEmail" class="form-input" placeholder="alex.rivera@clinic.org or #8492" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">
+                            <span>Password</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔑</span>
+                            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••••••" required>
+                            <button type="button" class="toggle-password" onclick="togglePassVisibility('loginPassword', this)">👁️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row-utility">
+                    <label class="remember-checkbox">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span>Keep biometric session</span>
+                    </label>
+                    <button type="button" class="link-btn" onclick="openForgotModal()">Forgot key?</button>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <span>Synchronize & Launch Dashboard</span>
+                    <span>→</span>
+                </button>
+
+                <button type="button" class="btn-demo" onclick="fillDemoAlex()">
+                    <span class="demo-badge">1-CLICK DEMO</span>
+                    <span>Load Patient: Alex (Mild Asthma + Smartwatch)</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- 2. REGISTRATION FORM -->
+        <div class="form-view" id="registerView">
+            <h1 class="form-title">Register Health Profile</h1>
+            <p class="form-subtitle">Fuse your clinical history with continuous wearable biosignals.</p>
+
+            <form onsubmit="handleAuthSubmit(event, 'register')">
+                <div class="form-grid">
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="regFullName">Full Legal Name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🪪</span>
+                            <input type="text" id="regFullName" class="form-input" placeholder="Alex Rivera" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="regEmail">Secure Email</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">✉️</span>
+                            <input type="email" id="regEmail" class="form-input" placeholder="alex@healthmail.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="regPassword">Master Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="regPassword" class="form-input" placeholder="At least 8 chars" oninput="evaluatePasswordStrength(this.value)" required>
+                            <button type="button" class="toggle-password" onclick="togglePassVisibility('regPassword', this)">👁️</button>
+                        </div>
+                        <div class="password-strength-container">
+                            <div class="strength-bar-bg">
+                                <div class="strength-bar-fill" id="strengthBarFill"></div>
+                            </div>
+                            <span class="strength-label" id="strengthText">Strength: enter password</span>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Baseline Inputs -->
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="regAge">Age</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">🎂</span>
+                                <input type="number" id="regAge" class="form-input" placeholder="28" min="12" max="110" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="regSex">Biological Sex</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">🧬</span>
+                                <select id="regSex" class="form-select" required>
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="intersex">Other / Intersex</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="regCondition">Primary Baseline Condition</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🩺</span>
+                            <select id="regCondition" class="form-select" required>
+                                <option value="none">None / Healthy Baseline</option>
+                                <option value="asthma" selected>Mild Asthma (Respiratory)</option>
+                                <option value="hypertension">Stage 1 Hypertension (Cardiovascular)</option>
+                                <option value="diabetes">Type 2 Diabetes (Metabolic)</option>
+                                <option value="arrhythmia">Sinus Arrhythmia (Cardiac)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Smartwatch Pairing Preference -->
+                    <div class="form-group">
+                        <label class="form-label">Connected Wearable Device</label>
+                        <div class="wearable-select-box">
+                            <div class="wearable-info">
+                                <div class="wearable-icon">⌚</div>
+                                <div>
+                                    <div class="wearable-text" id="selectedDeviceText">Apple Watch Series 9</div>
+                                    <div class="wearable-sub">Continuous PPG Heart Rate & Sleep Telemetry</div>
+                                </div>
+                            </div>
+                            <select id="wearableChoice" class="form-select" style="width: auto; padding-left: 0.75rem;" onchange="updateDeviceChoice(this.value)">
+                                <option value="apple">Apple Watch</option>
+                                <option value="galaxy">Galaxy Watch (WearOS)</option>
+                                <option value="garmin">Garmin Venu / Forerunner</option>
+                                <option value="fitbit">Fitbit Sense</option>
+                                <option value="simulated">Local Synthetic Simulator</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <span>Provision AI Health Model & Register</span>
+                    <span>→</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- 3. SUCCESS / TRANSITION SCREEN -->
+        <div class="auth-success-screen" id="successScreen">
+            <div class="success-pulse-ring">✓</div>
+            <h2 class="success-title" id="successHeading">Multimodal Node Synchronized</h2>
+            <p class="success-subtitle" id="successSub">Calibrating continuous smartwatch sensor pipeline with clinical profile baseline...</p>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; max-width: 320px; margin: 0 auto; text-align: left; font-size: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Active Patient:</span>
+                    <strong id="activePatientName">Alex Rivera</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Wearable Pair:</span>
+                    <strong style="color: var(--primary);" id="activeDeviceLabel">Apple Watch BLE 5.3</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-muted);">AI Fusion Inference:</span>
+                    <strong style="color: var(--emerald);">Active (Ready)</strong>
+                </div>
+            </div>
+
+            <div class="redirect-progress">
+                <div class="redirect-fill" id="redirectProgressFill"></div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.6rem;">Handing off to Dashboard telemetry...</span>
+        </div>
+
+    </main>
+
+</div>
+
+<!-- Forgot Password / OTP Recovery Modal -->
+<div class="modal-overlay" id="forgotModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-dark);">Identity Verification (2FA)</h3>
+            <button class="modal-close" onclick="closeForgotModal()">&times;</button>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+            A one-time cryptographic validation key was dispatched to your clinical recovery phone / email.
+        </p>
+        <div class="otp-inputs">
+            <input type="text" maxlength="1" class="otp-box" value="7">
+            <input type="text" maxlength="1" class="otp-box" value="4">
+            <input type="text" maxlength="1" class="otp-box" value="2">
+            <input type="text" maxlength="1" class="otp-box" value="9">
+        </div>
+        <button class="btn-submit" onclick="verifyOtpDemo()">
+            <span>Verify & Reset Access</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- Switch between Login and Register views ---
+    function switchTab(target) {
+        const loginTab = document.getElementById('tabLoginBtn');
+        const regTab = document.getElementById('tabRegisterBtn');
+        const loginView = document.getElementById('loginView');
+        const regView = document.getElementById('registerView');
+        const successScreen = document.getElementById('successScreen');
+
+        // Hide success if currently showing
+        successScreen.style.display = 'none';
+
+        if (target === 'login') {
+            loginTab.classList.add('active');
+            regTab.classList.remove('active');
+            loginView.classList.add('active');
+            regView.classList.remove('active');
+        } else {
+            regTab.classList.add('active');
+            loginTab.classList.remove('active');
+            regView.classList.add('active');
+            loginView.classList.remove('active');
+        }
+    }
+
+    // --- Show/Hide Password Toggle ---
+    function togglePassVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.innerText = '🙈';
+        } else {
+            input.type = 'password';
+            btn.innerText = '👁️';
+        }
+    }
+
+    // --- Password Strength Meter ---
+    function evaluatePasswordStrength(val) {
+        const fill = document.getElementById('strengthBarFill');
+        const text = document.getElementById('strengthText');
+        
+        let score = 0;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+
+        if (val.length === 0) {
+            fill.style.width = '0%';
+            text.innerText = 'Strength: enter password';
+            text.style.color = 'var(--text-muted)';
+        } else if (score <= 1) {
+            fill.style.width = '25%';
+            fill.style.backgroundColor = 'var(--danger)';
+            text.innerText = 'Strength: Weak (Add uppercase & symbols)';
+            text.style.color = 'var(--danger)';
+        } else if (score <= 3) {
+            fill.style.width = '65%';
+            fill.style.backgroundColor = 'var(--warning)';
+            text.innerText = 'Strength: Moderate (Good)';
+            text.style.color = 'var(--warning)';
+        } else {
+            fill.style.width = '100%';
+            fill.style.backgroundColor = 'var(--emerald)';
+            text.innerText = 'Strength: Robust medical-grade passkey';
+            text.style.color = 'var(--emerald)';
+        }
+    }
+
+    // --- Wearable selector update ---
+    function updateDeviceChoice(choice) {
+        const label = document.getElementById('selectedDeviceText');
+        const map = {
+            apple: 'Apple Watch Series 9',
+            galaxy: 'Samsung Galaxy Watch 6 (WearOS)',
+            garmin: 'Garmin Venu 3 Telemetry',
+            fitbit: 'Fitbit Sense 2 (HRV & Sleep)',
+            simulated: 'Synthetic Local Stream Simulator'
+        };
+        label.innerText = map[choice] || 'Smartwatch Sensor';
+    }
+
+    // --- Demo Quick Fill ---
+    function fillDemoAlex() {
+        document.getElementById('loginEmail').value = 'alex.rivera@clinic.org';
+        document.getElementById('loginPassword').value = 'ClinicalPass2026!';
+        
+        // Visual indicator that it was loaded
+        const btn = document.querySelector('.btn-demo');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span>⚡ Credentials Injected! Ready to launch</span>';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+        }, 1800);
+    }
+
+    // --- Form Submission & Launch Transition ---
+    function handleAuthSubmit(e, mode) {
+        e.preventDefault();
+
+        const loginView = document.getElementById('loginView');
+        const regView = document.getElementById('registerView');
+        const successScreen = document.getElementById('successScreen');
+        const authTabs = document.getElementById('authTabs');
+        const patientNameEl = document.getElementById('activePatientName');
+        const deviceLabel = document.getElementById('activeDeviceLabel');
+
+        let name = 'Alex Rivera';
+        if (mode === 'register') {
+            name = document.getElementById('regFullName').value || 'New Patient';
+            deviceLabel.innerText = document.getElementById('selectedDeviceText').innerText;
+        } else {
+            const loginVal = document.getElementById('loginEmail').value;
+            if (loginVal.includes('alex')) name = 'Alex Rivera';
+            else name = loginVal.split('@')[0] || 'Authenticated Patient';
+        }
+        patientNameEl.innerText = name;
+
+        // Hide views and trigger animation
+        loginView.classList.remove('active');
+        regView.classList.remove('active');
+        authTabs.style.display = 'none';
+        successScreen.style.display = 'block';
+
+        // Animate fill bar
+        setTimeout(() => {
+            document.getElementById('redirectProgressFill').style.width = '100%';
+        }, 50);
+
+        // Simulated redirect
+        setTimeout(() => {
+            alert(`Authentication Successful!\nRedirecting to AI Dashboard with patient: ${name}`);
+            // To link with index.html in the same directory:
+            window.location.href = 'index.html';
+        }, 2200);
+    }
+
+    // --- Forgot Password Modal ---
+    function openForgotModal() {
+        document.getElementById('forgotModal').classList.add('active');
+    }
+
+    function closeForgotModal() {
+        document.getElementById('forgotModal').classList.remove('active');
+    }
+
+    function verifyOtpDemo() {
+        alert('Biometric OTP verified. Recovery instructions dispatched.');
+        closeForgotModal();
+    }
+</script>
+
+</body>
+</html>

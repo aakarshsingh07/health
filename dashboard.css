@@ -103,15 +103,6 @@
             letter-spacing: -0.02em;
         }
 
-        .brand-badge {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--primary);
-            background-color: var(--primary-subtle);
-            padding: 2px 8px;
-            border-radius: var(--radius-full);
-            margin-left: 0.4rem;
-        }
 
         .nav-meta-group {
             display: flex;
