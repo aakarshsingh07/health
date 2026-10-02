@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PulseAI | Multimodal Health Monitor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+
+  <div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Top Navigation -->
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-5 border-b border-slate-800 gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+          <span class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 inline-flex items-center justify-center text-indigo-400 text-sm">⚕</span>
+          PulseAI Diagnostics
+        </h1>
+        <p class="text-xs text-slate-400 mt-1" id="device-tag">Connected Device: Telemetry Syncing...</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-medium text-slate-300" id="patient-name">Patient: Authenticating...</span>
+        <button onclick="handleLogout()" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-300">
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- AI Multimodal Assessment Hero -->
+    <section id="ai-card" class="p-6 rounded-2xl border transition-all duration-300 bg-slate-800/80 border-slate-700 shadow-xl">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-700 text-slate-300">Evaluating</span>
+            <span class="text-xs text-slate-400">Multimodal Fusion Model</span>
+          </div>
+          <h2 id="ai-prediction" class="text-lg font-semibold text-white mt-2">Loading clinical telemetry and sensor streams...</h2>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-3xl font-extrabold text-white" id="health-score">--<span class="text-base text-slate-400">/100</span></div>
+          <p class="text-xs text-slate-400">Composite Health Score</p>
+        </div>
+      </div>
+      <div id="ai-alert-box" class="mt-4 p-3.5 rounded-xl text-sm font-medium bg-slate-900/60 border border-slate-700 text-slate-200">
+        Connecting to diagnostic engine...
+      </div>
+    </section>
+
+    <!-- Smartwatch Real-Time Vitals -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Steps -->
+      <div class="bg-slate-800/70 border border-slate-800 p-5 rounded-2xl shadow-sm">
+        <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
+          <span>Physical Activity</span>
+          <span>👟</span>
+        </div>
+        <div class="text-3xl font-bold text-sky-400 mt-3" id="metric-steps">--</div>
+        <p class="text-xs text-slate-400 mt-1">Steps Today</p>
+      </div>
+
+      <!-- Sleep -->
+      <div class="bg-slate-800/70 border border-slate-800 p-5 rounded-2xl shadow-sm">
+        <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
+          <span>Sleep Duration</span>
+          <span>🌙</span>
+        </div>
+        <div class="text-3xl font-bold text-amber-400 mt-3" id="metric-sleep">-- hrs</div>
+        <p class="text-xs text-slate-400 mt-1">Last Night's Rest</p>
+      </div>
+
+      <!-- Heart Rate -->
+      <div class="bg-slate-800/70 border border-slate-800 p-5 rounded-2xl shadow-sm">
+        <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
+          <span>Avg Resting HR</span>
+          <span>❤️</span>
+        </div>
+        <div class="text-3xl font-bold text-rose-400 mt-3" id="metric-hr">-- bpm</div>
+        <p class="text-xs text-slate-400 mt-1">Smartwatch Telemetry</p>
+      </div>
+    </section>
+
+    <!-- Clinical EHR Baseline -->
+    <section class="bg-slate-800/50 border border-slate-800 p-6 rounded-2xl">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-3 mb-4">
+        Clinical Baseline Profile (EHR Records)
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+        <div>
+          <span class="text-slate-500 block text-xs">Patient Demographics</span>
+          <span class="text-slate-200 font-semibold" id="clinical-demographics">--</span>
+        </div>
+        <div>
+          <span class="text-slate-500 block text-xs">Documented Conditions</span>
+          <span class="text-slate-200 font-semibold" id="clinical-baseline">--</span>
+        </div>
+        <div>
+          <span class="text-slate-500 block text-xs">Paired Sensor Model</span>
+          <span class="text-slate-200 font-semibold" id="clinical-device">--</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5000/api';
+
+    function handleLogout() {
+      localStorage.removeItem('user_id');
+      localStorage.removeItem('user_profile');
+      window.location.href = 'auth.html';
+    }
+
+    async function loadDashboard() {
+      const userId = localStorage.getItem('user_id');
+
+      if (!userId) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/dashboard/${userId}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load profile');
+        }
+
+        renderData(data);
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+        document.getElementById('ai-prediction').textContent = 'Unable to reach backend API.';
+        document.getElementById('ai-alert-box').textContent = 'Please confirm python app.py is running on localhost:5000.';
+      }
+    }
+
+    function renderData(data) {
+      const user = data.user;
+      const wearable = data.smartwatch_live;
+      const ai = data.ai_analysis;
+
+      // Header & Clinical Information
+      document.getElementById('patient-name').textContent = `Patient: ${user.full_name}`;
+      document.getElementById('device-tag').textContent = `Connected Device: ${user.device_model}`;
+      document.getElementById('clinical-demographics').textContent = `${user.age} yrs • ${user.gender}`;
+      document.getElementById('clinical-baseline').textContent = user.clinical_baseline || 'None';
+      document.getElementById('clinical-device').textContent = user.device_model;
+
+      // Smartwatch Vitals
+      document.getElementById('metric-steps').textContent = wearable.steps_today.toLocaleString();
+      document.getElementById('metric-sleep').textContent = `${wearable.sleep_hours_last_night} hrs`;
+      document.getElementById('metric-hr').textContent = `${wearable.heart_rate_avg} bpm`;
+
+      // AI Diagnostics Assessment
+      document.getElementById('health-score').innerHTML = `${ai.health_score}<span class="text-base text-slate-400">/100</span>`;
+      document.getElementById('ai-prediction').textContent = ai.prediction;
+      document.getElementById('ai-alert-box').innerHTML = `<strong>🔔 Actionable Alert:</strong> ${ai.alert}`;
+
+      const aiCard = document.getElementById('ai-card');
+      const badge = document.getElementById('status-badge');
+
+      if (ai.status === 'Optimal') {
+        aiCard.className = 'p-6 rounded-2xl border transition-all duration-300 bg-emerald-950/20 border-emerald-500/30 shadow-xl';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        badge.textContent = 'Optimal';
+      } else if (ai.status === 'Warning') {
+        aiCard.className = 'p-6 rounded-2xl border transition-all duration-300 bg-amber-950/20 border-amber-500/30 shadow-xl';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        badge.textContent = 'Warning';
+      } else {
+        aiCard.className = 'p-6 rounded-2xl border transition-all duration-300 bg-rose-950/20 border-rose-500/30 shadow-xl';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30';
+        badge.textContent = 'Critical Action';
+      }
+    }
+
+    // Auto-load on page startup
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+  </script>
+</body>
+</html>

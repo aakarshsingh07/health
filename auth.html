@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseAI | Clinical Portal & Authentication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-slate-800/90 backdrop-blur-md rounded-2xl border border-slate-700 p-8 shadow-2xl">
+
+        <!-- Branding Header -->
+        <div class="text-center mb-8">
+            <div
+                class="inline-flex items-center justify-center w-12 h-12 bg-indigo-600/20 border border-indigo-500/30 rounded-xl text-indigo-400 font-bold text-xl mb-3">
+                ⚕
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight">PulseAI Health</h1>
+            <p class="text-slate-400 text-sm mt-1">Multimodal Telemetry & EHR Diagnostics</p>
+        </div>
+
+        <!-- Tab Toggle -->
+        <div class="flex border-b border-slate-700 mb-6">
+            <button id="tab-login" onclick="switchTab('login')"
+                class="flex-1 pb-3 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 transition-colors">
+                Sign In
+            </button>
+            <button id="tab-register" onclick="switchTab('register')"
+                class="flex-1 pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors">
+                Register Profile
+            </button>
+        </div>
+
+        <!-- Alert / Status Notice -->
+        <div id="status-box" class="hidden mb-4 p-3 rounded-lg text-xs font-medium"></div>
+
+        <!-- SIGN IN FORM -->
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Email
+                    Address</label>
+                <input type="email" id="login-email" required
+                    class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+                <input type="password" id="login-password" required
+                    class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="">
+            </div>
+            <button type="submit" id="login-btn"
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-lg text-sm transition-all shadow-md mt-2">
+                Sign In to Portal
+            </button>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="register-form" class="hidden space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Full Legal
+                    Name</label>
+                <input type="text" id="reg-name" required
+                    class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Email
+                    Address</label>
+                <input type="email" id="reg-email" required
+                    class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+                <input type="password" id="reg-password" required
+                    class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Age</label>
+                    <input type="number" id="reg-age" value="28" min="1" max="120" required
+                        class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label
+                        class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Gender</label>
+                    <select id="reg-gender"
+                        class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Clinical
+                    Baseline / Conditions</label>
+                <input type="text" id="reg-baseline"
+                    class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="e.g. Mild Asthma, Hypertension, None">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Smartwatch
+                    Model</label>
+                <select id="reg-device"
+                    class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <option value="Apple Watch Series 9">Apple Watch Series 9</option>
+                    <option value="Samsung Galaxy Watch 6">Samsung Galaxy Watch 6</option>
+                    <option value="Garmin Venu 3">Garmin Venu 3</option>
+                    <option value="Generic Telemetry Simulator">Telemetry Simulator</option>
+                </select>
+            </div>
+
+            <button type="submit" id="reg-btn"
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg text-sm transition-all shadow-md mt-3">
+                Register Profile & Sync
+            </button>
+        </form>
+
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        function showStatus(msg, isError = false) {
+            const box = document.getElementById('status-box');
+            box.textContent = msg;
+            box.className = isError
+                ? 'mb-4 p-3 rounded-lg text-xs font-medium bg-red-500/20 text-red-300 border border-red-500/30'
+                : 'mb-4 p-3 rounded-lg text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            box.classList.remove('hidden');
+        }
+
+        function switchTab(tab) {
+            document.getElementById('status-box').classList.add('hidden');
+            if (tab === 'login') {
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('register-form').classList.add('hidden');
+                document.getElementById('tab-login').className = 'flex-1 pb-3 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 transition-colors';
+                document.getElementById('tab-register').className = 'flex-1 pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors';
+            } else {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('register-form').classList.remove('hidden');
+                document.getElementById('tab-register').className = 'flex-1 pb-3 text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 transition-colors';
+                document.getElementById('tab-login').className = 'flex-1 pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-colors';
+            }
+        }
+
+        // REGISTRATION
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('reg-btn');
+            btn.innerText = 'Creating Profile...';
+            btn.disabled = true;
+
+            const payload = {
+                full_name: document.getElementById('reg-name').value.trim(),
+                email: document.getElementById('reg-email').value.trim(),
+                password: document.getElementById('reg-password').value,
+                age: parseInt(document.getElementById('reg-age').value) || 28,
+                gender: document.getElementById('reg-gender').value,
+                clinical_baseline: document.getElementById('reg-baseline').value.trim() || 'None',
+                device_model: document.getElementById('reg-device').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    showStatus('Registration complete! Please sign in with your password.');
+                    document.getElementById('login-email').value = payload.email;
+                    switchTab('login');
+                } else {
+                    showStatus(data.error || 'Registration failed.', true);
+                }
+            } catch (err) {
+                showStatus('Cannot reach backend on port 5000. Is app.py running?', true);
+            } finally {
+                btn.innerText = 'Register Profile & Sync';
+                btn.disabled = false;
+            }
+        });
+
+        // LOGIN
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            btn.innerText = 'Authenticating...';
+            btn.disabled = true;
+
+            const payload = {
+                email: document.getElementById('login-email').value.trim(),
+                password: document.getElementById('login-password').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Persist user ID and profile for the dashboard
+                    localStorage.setItem('user_id', data.user.id);
+                    localStorage.setItem('user_profile', JSON.stringify(data.user));
+                    window.location.href = 'index.html';
+                } else {
+                    showStatus(data.error || 'Invalid credentials.', true);
+                }
+            } catch (err) {
+                showStatus('Cannot reach backend on port 5000. Is app.py running?', true);
+            } finally {
+                btn.innerText = 'Sign In to Portal';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>
