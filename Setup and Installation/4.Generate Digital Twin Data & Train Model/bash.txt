@@ -1,0 +1,5 @@
+# Step A: Generate 10 days of synthetic metabolic data
+python generate_data.py
+
+# Step B: Train the Random Forest AI Model
+python train_model.py

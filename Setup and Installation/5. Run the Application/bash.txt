@@ -1,0 +1,4 @@
+# Start Flask Backend
+python app.py
+
+# Open auth.html in your browser to register/login, then view the dashboard.

@@ -1,3 +1,6 @@
+import os
+import joblib
+import pandas as pd
 import mysql.connector
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -6,11 +9,22 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 CORS(app)  # Enables frontend fetch access across ports and local networks
 
+# ----------------- AI MODEL INITIALIZATION -----------------
+# Load the Phase 2 Digital Twin model when the server starts
+try:
+    model = joblib.load('digital_twin_model.pkl')
+    # model_features.pkl is no longer needed since we have a fixed 4-column dataset!
+    ML_ENABLED = True
+    print("SUCCESS: Digital Twin AI Model Loaded successfully.")
+except FileNotFoundError:
+    ML_ENABLED = False
+    print("WARNING: digital_twin_model.pkl not found. Falling back to basic logic.")
+
 # Database configuration: Adjust user/password as needed
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'hkbhalar786',  # <-- REPLACE WITH YOUR REAL MYSQL PASSWORD
+    'password': 'hkbhalar786',  # <-- Keep your real password here
     'database': 'ai_health_db'
 }
 
@@ -116,37 +130,67 @@ def get_dashboard_data(user_id):
             (user_id,)
         )
         wearable = cursor.fetchone() or {'steps': 0, 'sleep_hours': 0.0, 'avg_heart_rate': 72}
-
-        # 3. Multimodal heuristic AI logic (Static EHR + Continuous Telemetry)
-        score = 92
-        status = "Optimal"
-        alert = "Vitals are within your target range. Keep up regular physical activity."
-        prediction = "Recovery metrics align with normal baselines."
-
-        sleep = float(wearable['sleep_hours'])
-        baseline = (user['clinical_baseline'] or '').lower()
-        hr = wearable['avg_heart_rate']
-
-        if sleep < 6.0:
-            score -= 18
-            if "asthma" in baseline:
-                status = "Warning"
-                prediction = "Elevated fatigue detected. Asthma risk slightly increased due to poor sleep recovery."
-                alert = "Take a 20-minute rest. Prioritize 7+ hours of sleep tonight."
-            else:
-                status = "Warning"
-                prediction = "Fatigue markers elevated due to insufficient sleep duration."
-                alert = "Schedule active recovery. Avoid heavy cardio this evening."
-
-        if hr > 95:
-            score -= 15
-            status = "Critical" if status == "Warning" else "Warning"
-            prediction += " Elevated resting heart rate pattern detected."
-            alert = "Elevated resting heart rate detected. Rest and re-check in 15 minutes."
-
         cursor.close()
         conn.close()
 
+        # 3. DIGITAL TWIN AI PREDICTION LOGIC
+        if ML_ENABLED:
+            clinical_notes = (user['clinical_baseline'] or '').lower()
+            current_glucose = 165.0 if 'diabetes' in clinical_notes else 110.0
+
+            # Intercept live intervention triggers from the frontend dashboard
+            carbs = float(request.args.get('carbs', 0.0))
+            insulin = float(request.args.get('insulin', 0.0))
+
+            # 1. Base Machine Learning Prediction (The AI's guess)
+            input_data = {
+                'CGM': [current_glucose],
+                'Carbs': [carbs],
+                'Insulin': [insulin],
+                'HeartRate': [wearable['avg_heart_rate']]
+            }
+            df = pd.DataFrame(input_data) 
+            base_prediction = model.predict(df)[0]
+
+            # 2. PHYSICS-INFORMED GUARDRAILS (The Medical Math)
+            # 1g Carbs raises glucose by ~2.5 mg/dL | 1 Unit Insulin drops it by ~40 mg/dL
+            physio_shift = (carbs * 2.5) - (insulin * 40.0)
+            
+            # Final Fused Prediction
+            predicted_glucose = max(40.0, base_prediction + physio_shift)
+
+            # Route clinical alerts to frontend UI
+            prediction_text = f"30-Min Blood Sugar Forecast: {predicted_glucose:.1f} mg/dL (Current: {current_glucose:.1f})"
+            
+            if predicted_glucose > 180.0:
+                status = "Critical"
+                alert = "[ HYPERGLYCEMIA RISK ] - Administer insulin or monitor closely."
+                score = max(10, 100 - int(predicted_glucose - 180))
+            elif predicted_glucose < 70.0:
+                status = "Critical"
+                alert = "[ HYPOGLYCEMIA RISK ] - Patient requires fast-acting carbohydrates."
+                score = max(10, int(predicted_glucose)) 
+            elif predicted_glucose > 140.0:
+                status = "Warning"
+                alert = "Glucose trending elevated. Watch diet and consider light activity."
+                score = 82
+            else:
+                status = "Optimal"
+                alert = "Patient is stable. Future trajectory is in the safe zone."
+                score = 96
+
+        else:
+            # Fallback basic logic if .pkl files are missing
+            score = 92
+            status = "Optimal"
+            prediction_text = "Standard Telemetry Baseline (AI Offline)"
+            alert = "Vitals are within range."
+            if wearable['avg_heart_rate'] > 95:
+                status = "Warning"
+                alert = "Elevated resting heart rate detected."
+                score = 75
+
+        # Return payload perfectly matching index.html expectation
         return jsonify({
             'user': user,
             'smartwatch_live': {
@@ -155,9 +199,9 @@ def get_dashboard_data(user_id):
                 'heart_rate_avg': wearable['avg_heart_rate']
             },
             'ai_analysis': {
-                'health_score': max(score, 10),
+                'health_score': score,
                 'status': status,
-                'prediction': prediction,
+                'prediction': prediction_text,
                 'alert': alert
             }
         }), 200

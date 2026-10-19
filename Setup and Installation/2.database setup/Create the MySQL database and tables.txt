@@ -1,0 +1,23 @@
+CREATE DATABASE ai_health_db;
+USE ai_health_db;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password_hash VARCHAR(255),
+    age INT,
+    gender VARCHAR(20),
+    clinical_baseline TEXT,
+    device_model VARCHAR(50)
+);
+
+CREATE TABLE wearable_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    steps INT,
+    sleep_hours FLOAT,
+    avg_heart_rate INT,
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

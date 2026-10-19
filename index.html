@@ -48,6 +48,26 @@
       </div>
     </section>
 
+    <!-- Clinical Interventions (Digital Twin Controls) -->
+    <section class="bg-slate-800/80 border border-slate-700 p-5 rounded-2xl shadow-md mt-4">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">
+        Digital Twin Controls (Live Interventions)
+      </h3>
+      <div class="flex flex-col sm:flex-row gap-4 items-end">
+        <div class="flex-1">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Carbohydrates (Meals in grams)</label>
+          <input type="number" id="input-carbs" value="0" min="0" class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="flex-1">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Bolus Insulin (Units)</label>
+          <input type="number" id="input-insulin" value="0" min="0" step="0.5" class="w-full bg-slate-900/60 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+        </div>
+        <button onclick="simulateTrajectory()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition-all shadow-md">
+          Simulate 30-Min Trajectory
+        </button>
+      </div>
+    </section>
+
     <!-- Smartwatch Real-Time Vitals -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
       <!-- Steps -->
@@ -113,16 +133,18 @@
       window.location.href = 'auth.html';
     }
 
+    let currentCarbs = 0;
+    let currentInsulin = 0;
+
     async function loadDashboard() {
       const userId = localStorage.getItem('user_id');
-
       if (!userId) {
         window.location.href = 'auth.html';
         return;
       }
-
       try {
-        const res = await fetch(`${API_BASE_URL}/dashboard/${userId}`);
+        // Send the carbs and insulin parameters to the Flask backend
+        const res = await fetch(`${API_BASE_URL}/dashboard/${userId}?carbs=${currentCarbs}&insulin=${currentInsulin}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -136,6 +158,13 @@
         document.getElementById('ai-alert-box').textContent = 'Please confirm python app.py is running on localhost:5000.';
       }
     }
+
+    function simulateTrajectory() {
+      currentCarbs = document.getElementById('input-carbs').value || 0;
+      currentInsulin = document.getElementById('input-insulin').value || 0;
+      loadDashboard(); // Reload the dashboard with the new data
+    }
+
 
     function renderData(data) {
       const user = data.user;
